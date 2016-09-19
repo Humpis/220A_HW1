@@ -10,8 +10,9 @@
 	arg3: .word 0
 	Err_string: .asciiz "ARGUMENT ERROR"
 	Part1_string: .asciiz "ARG2: "
-	Part2_string: .asciiz "Part 2: "
+	Part2_string: .asciiz "ARG3: "
 	Space: .asciiz " "
+	NewLine: .asciiz "\n"
 # Helper macro for grabbing command line arguments
 .macro load_args
 	sw $a0, numargs
@@ -124,6 +125,71 @@ arg1_A:
 	li $v0, 101			# print arg2 in sm
 	la $a0, ($t0)
 	syscall
+	
+	li $v0, 4			# print nl
+	la $a0, NewLine
+	syscall
+	
+arg2_part2:
+	lw $t0, arg3			# put location of arg2 in t0
+	lb $t5, ($t0)			# put 1st char in s1 
+	addi $t0, $t0, 1		# advance to next char
+	lb $t6, ($t0)			# do dsame for 2-4
+	addi $t0, $t0, 1		
+	lb $t7, ($t0)			
+	addi $t0, $t0, 1		
+	lb $t8, ($t0)			 
+	
+	li $v0, 4			# print arg2
+	la $a0, Part1_string
+	syscall
+	
+	li $t0, 0
+	move $t0, $t5			# move first letter
+	sll $t1, $t6, 8			# move second
+	add $t0, $t0, $t1
+	sll $t1, $t7, 16		# move 3
+	add $t0, $t0, $t1
+	sll $t1, $t8, 24		# move 4
+	add $t0, $t0, $t1		# move 4
+	
+	li $v0, 35			# print arg2 in bin
+	la $a0, ($t0)
+	syscall
+	
+	li $v0, 4			# print space
+	la $a0, Space
+	syscall
+	
+	li $v0, 34			# print arg2 in hex
+	la $a0, ($t0)
+	syscall
+	
+	li $v0, 4			# print space
+	la $a0, Space
+	syscall
+	
+	li $v0, 1			# print arg2 in 2s comp
+	la $a0, ($t0)
+	syscall
+	
+	li $v0, 4			# print space
+	la $a0, Space
+	syscall
+	
+	li $v0, 100			# print arg2 in 1s comp
+	la $a0, ($t0)
+	syscall
+	
+	li $v0, 4			# print space
+	la $a0, Space
+	syscall
+	
+	li $v0, 101			# print arg2 in sm
+	la $a0, ($t0)
+	syscall
+	
+	
 	j exit
 
 error:
