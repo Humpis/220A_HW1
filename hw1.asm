@@ -13,6 +13,7 @@
 	Part2_string: .asciiz "ARG3: "
 	Space: .asciiz " "
 	NewLine: .asciiz "\n"
+	HammingDist: .asciiz "Hamming Distance: "
 # Helper macro for grabbing command line arguments
 .macro load_args
 	sw $a0, numargs
@@ -89,6 +90,7 @@ arg1_A:
 	add $t0, $t0, $t1
 	sll $t1, $s4, 24		# move 4
 	add $t0, $t0, $t1		# move 4
+	move $s6, $t0			# move for hamming
 	
 	li $v0, 35			# print arg2 in bin
 	la $a0, ($t0)
@@ -152,6 +154,7 @@ arg2_part2:
 	add $t0, $t0, $t1
 	sll $t1, $t8, 24		# move 4
 	add $t0, $t0, $t1		# move 4
+	move $s7, $t0			# store for hamming
 	
 	li $v0, 35			# print arg2 in bin
 	la $a0, ($t0)
@@ -189,7 +192,28 @@ arg2_part2:
 	la $a0, ($t0)
 	syscall
 	
+hammingDistance:
+	li $t0, 0			# ham = 0
+	xor $t1, $s6, $s7		# val = x or y
 	
+hamLoop:
+	beqz $t1, hamDone		# val = 0
+	addi $t0, $t0, 1		# ham++
+	addi $t2, $t1, -1		# val-- for and
+	and $t1, $t1, $t2		# val &= val -1
+	j hamLoop
+	
+hamDone:
+	li $v0, 4			# print nl
+	la $a0, NewLine
+	syscall
+	li $v0, 4			# print hammtext
+	la $a0, HammingDist
+	syscall
+	
+	li $v0, 1			# print ham
+	la $a0, ($t0)	
+	syscall
 	j exit
 
 error:
