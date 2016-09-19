@@ -97,10 +97,33 @@ arg1_A:
 	la $a0, Space
 	syscall
 	
-	li $v0, 34			# print arg2 in bin
+	li $v0, 34			# print arg2 in hex
 	la $a0, ($t0)
 	syscall
 	
+	li $v0, 4			# print space
+	la $a0, Space
+	syscall
+	
+	li $v0, 1			# print arg2 in 2s comp
+	la $a0, ($t0)
+	syscall
+	
+	li $v0, 4			# print space
+	la $a0, Space
+	syscall
+	
+	li $v0, 100			# print arg2 in 1s comp
+	la $a0, ($t0)
+	syscall
+	
+	li $v0, 4			# print space
+	la $a0, Space
+	syscall
+	
+	li $v0, 101			# print arg2 in sm
+	la $a0, ($t0)
+	syscall
 	j exit
 
 error:
