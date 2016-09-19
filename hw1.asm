@@ -80,12 +80,14 @@ arg1_A:
 	la $a0, Part1_string
 	syscall
 	
-	sll $t0, $s1, 24		# move first letter
-	sll $t1, $s2, 16		# move second
+	li $t0, 0
+	move $t0, $s1			# move first letter
+	sll $t1, $s2, 8			# move second
 	add $t0, $t0, $t1
-	sll $t1, $s3, 8			# move 3
+	sll $t1, $s3, 16		# move 3
 	add $t0, $t0, $t1
-	add $t0, $t0, $s4		# move 4
+	sll $t1, $s4, 24		# move 4
+	add $t0, $t0, $t1		# move 4
 	
 	li $v0, 35			# print arg2 in bin
 	la $a0, ($t0)
@@ -93,6 +95,10 @@ arg1_A:
 	
 	li $v0, 4			# print space
 	la $a0, Space
+	syscall
+	
+	li $v0, 34			# print arg2 in bin
+	la $a0, ($t0)
 	syscall
 	
 	j exit
