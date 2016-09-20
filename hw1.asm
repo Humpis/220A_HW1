@@ -256,12 +256,12 @@ increment:
 	j r_loop
 		
 r_loop_done:
-	li $v0, 4			# print p2
-	la $a0, Sum
-	syscall
-	li $v0, 1			# print p2
-	move $a0, $t2
-	syscall
+	#li $v0, 4			# print p2
+	#la $a0, Sum
+	#syscall
+	#li $v0, 1			# print p2
+	#move $a0, $t2
+	#syscall
 	
 	li $v0, 40
 	li $a0, 0			# a0 = 0
@@ -277,6 +277,11 @@ r_loop_done:
 	
 r_loop2:
 	blt $a0, 64 testPower		# less than 64
+	beq $a0, 64, r_loop2_done
+	beq $a0, 128, r_loop2_done
+	beq $a0, 256, r_loop2_done
+	beq $a0, 512, r_loop2_done
+	beq $a0, 1024, r_loop2_done
 	
 notPower2:
 	li $v0, 42
@@ -295,6 +300,8 @@ testPower:
 	j notPower2
 
 r_loop2_done:
+	addi $t3, $t3, 1		# was power of 2, add 1
+
 	li $v0, 4			# print
 	la $a0, LastVal
 	syscall
