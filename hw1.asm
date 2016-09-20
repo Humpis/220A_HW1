@@ -15,6 +15,14 @@
 	NewLine: .asciiz "\n"
 	HammingDist: .asciiz "Hamming Distance: "
 	Sum: .asciiz "sum: "
+	LastVal: .asciiz "Last value drawn: "
+	TotalVal: .asciiz "Total values: "
+	Odd: .asciiz "# of Odd: "
+	Even: .asciiz "# of Even: "
+	Power2: .asciiz "Power of 2: "
+	Mult2: .asciiz "Multiple of 2: "
+	Mult4: .asciiz "Multiple of 4: "
+	Mult8: .asciiz "Multiple of 8: "
 # Helper macro for grabbing command line arguments
 .macro load_args
 	sw $a0, numargs
@@ -253,6 +261,91 @@ r_loop_done:
 	syscall
 	li $v0, 1			# print p2
 	move $a0, $t2
+	syscall
+	
+	li $v0, 40
+	li $a0, 0			# a0 = 0
+	move $a1, $t2			# seed
+	syscall
+	li $t0, 0			# total values
+	li $t1, 0			# evens
+	li $t2, 0			# odds
+	li $t3, 0			# powers of 2
+	li $t4, 0 			# mult 2
+	li $t5, 0			# mut 4
+	li $t6, 0			# mult 8
+	
+r_loop2:
+	blt $a0, 64 testPower		# less than 64
+	
+notPower2:
+	li $v0, 42
+	li $a1, 1024			# uppserbound
+	syscall
+	
+	j r_loop2
+	
+testPower:
+	beq $a0, 1, r_loop2_done
+	beq $a0, 2, r_loop2_done
+	beq $a0, 4, r_loop2_done
+	beq $a0, 8, r_loop2_done
+	beq $a0, 16, r_loop2_done
+	beq $a0, 32, r_loop2_done	
+	j notPower2
+
+r_loop2_done:
+	li $v0, 4			# print
+	la $a0, LastVal
+	syscall
+	
+	li $v0, 4			# print nl
+	la $a0, NewLine
+	syscall
+	li $v0, 4			# print
+	la $a0, TotalVal
+	syscall
+
+	li $v0, 4			# print nl
+	la $a0, NewLine
+	syscall
+	li $v0, 4			# print
+	la $a0, Even
+	syscall
+	
+	li $v0, 4			# print nl
+	la $a0, NewLine
+	syscall
+	li $v0, 4			# print
+	la $a0, Odd
+	syscall
+
+	li $v0, 4			# print nl
+	la $a0, NewLine
+	syscall
+	li $v0, 4			# print
+	la $a0, Power2
+	syscall
+	
+	li $v0, 4			# print nl
+	la $a0, NewLine
+	syscall
+	li $v0, 4			# print
+	la $a0, Mult2
+	syscall
+	
+	li $v0, 4			# print nl
+	la $a0, NewLine
+	syscall
+	li $v0, 4			# print
+	la $a0, Mult4
+	syscall
+	
+	li $v0, 4			# print nl
+	la $a0, NewLine
+	syscall
+	li $v0, 4			# print
+	la $a0, Mult8
 	syscall
 	j exit
 
