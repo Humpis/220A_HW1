@@ -14,6 +14,7 @@
 	Space: .asciiz " "
 	NewLine: .asciiz "\n"
 	HammingDist: .asciiz "Hamming Distance: "
+	Sum: .asciiz "sum: "
 # Helper macro for grabbing command line arguments
 .macro load_args
 	sw $a0, numargs
@@ -223,8 +224,35 @@ error:
 	j exit
 
 arg1_R:
+	lw $t0, arg2			# put location of arg2 in t0
+	beqz $t0, error			# no arg 2
+	lw $t0, arg3			# put location of arg3 in t0
+	bnez $t0, error			# arg 3
+	lw $t0, arg2
+	li $t2, 0			# sum = 0
+	
+r_loop:
+	lb $t1, ($t0)			# char at position in t0
+	beqz $t1, r_loop_done		# end of string
+	blt $t1, '0', r_loop_done	# LESS THAN 0
+	bgt $t1, '9', r_loop_done	#greater than 9
+	li $t3, 10			# for mult
+	mult $t2, $t3
+	mflo $t2			# sum = sum*10
+	li $t4, '0'		
+	sub $t3, $t1, $t4		# char - 0
+	add $t2, $t2, $t3		# sum = sum + ^^
+	
+increment:
+	addi $t0, $t0, 1		# increent string
+	j r_loop
+		
+r_loop_done:
 	li $v0, 4			# print p2
-	la $a0, Part2_string
+	la $a0, Sum
+	syscall
+	li $v0, 1			# print p2
+	move $a0, $t2
 	syscall
 	j exit
 
