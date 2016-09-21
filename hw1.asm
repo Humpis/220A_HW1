@@ -152,7 +152,7 @@ arg2_part2:
 	lb $t8, ($t0)			 
 	
 	li $v0, 4			# print arg2
-	la $a0, Part1_string
+	la $a0, Part2_string
 	syscall
 	
 	li $t0, 0
@@ -270,25 +270,55 @@ r_loop_done:
 	li $t0, 0			# total values
 	li $t1, 0			# evens
 	li $t2, 0			# odds
-	li $t3, 0			# powers of 2
+	#li $t3, 0			# powers of 2
 	li $t4, 0 			# mult 2
 	li $t5, 0			# mut 4
 	li $t6, 0			# mult 8
 	
 r_loop2:
-	blt $a0, 64 testPower		# less than 64
-	beq $a0, 64, r_loop2_done
-	beq $a0, 128, r_loop2_done
-	beq $a0, 256, r_loop2_done
-	beq $a0, 512, r_loop2_done
-	beq $a0, 1024, r_loop2_done
+	addi $t0, $t0, 1		# total values ++
+	li $t7, 2
+	div $a0, $t7			# check for even/mult2
+	mfhi $t7
+	bnez $t7, odd
+	addi $t1, $t1, 1		# power 4++
+	j mult2Checked
 	
-notPower2:
+odd:
+	addi $t2, $t2, 1		# power 4++
+	
+mult2Checked:
+	li $t7, 4
+	div $a0, $t7			# check for even/mult2
+	mfhi $t7
+	bnez $t7, mult4Checked
+	addi $t5, $t5, 1		# power 4++
+	
+mult4Checked:
+	li $t7, 8
+	div $a0, $t7			# check for even/mult2
+	mfhi $t7
+	bnez $t7, mult8Checked
+	addi $t6, $t6, 1		# power 8++
+		
+mult8Checked:	
+	blt $a0, 64 testPower		# less than 64
+	beq $a0, 64, power2
+	beq $a0, 128, power2
+	beq $a0, 256, power2
+	beq $a0, 512, power2
+	beq $a0, 1024, power2
+	
+powerChecked:
 	li $v0, 42
 	li $a1, 1024			# uppserbound
 	syscall
 	
 	j r_loop2
+
+power2:
+	addi $t3, $t3, 1		# power 2 ++
+	j powerChecked
 	
 testPower:
 	beq $a0, 1, r_loop2_done
@@ -297,13 +327,17 @@ testPower:
 	beq $a0, 8, r_loop2_done
 	beq $a0, 16, r_loop2_done
 	beq $a0, 32, r_loop2_done	
-	j notPower2
+	j powerChecked
 
 r_loop2_done:
-	addi $t3, $t3, 1		# was power of 2, add 1
+	move $t7, $a0			# save last val
+	addi $t3, $t3, 1		# was power of 2, add 1	
 
 	li $v0, 4			# print
 	la $a0, LastVal
+	syscall
+	li $v0, 1			# print
+	move $a0, $t7
 	syscall
 	
 	li $v0, 4			# print nl
@@ -312,12 +346,18 @@ r_loop2_done:
 	li $v0, 4			# print
 	la $a0, TotalVal
 	syscall
+	li $v0, 1			# print 
+	move $a0, $t0
+	syscall
 
 	li $v0, 4			# print nl
 	la $a0, NewLine
 	syscall
 	li $v0, 4			# print
 	la $a0, Even
+	syscall
+	li $v0, 1			# print 
+	move $a0, $t1
 	syscall
 	
 	li $v0, 4			# print nl
@@ -326,12 +366,18 @@ r_loop2_done:
 	li $v0, 4			# print
 	la $a0, Odd
 	syscall
+	li $v0, 1			# print 
+	move $a0, $t2
+	syscall
 
 	li $v0, 4			# print nl
 	la $a0, NewLine
 	syscall
 	li $v0, 4			# print
 	la $a0, Power2
+	syscall
+	li $v0, 1			# print 
+	move $a0, $t3
 	syscall
 	
 	li $v0, 4			# print nl
@@ -340,12 +386,18 @@ r_loop2_done:
 	li $v0, 4			# print
 	la $a0, Mult2
 	syscall
+	li $v0, 1			# print 
+	move $a0, $t1
+	syscall
 	
 	li $v0, 4			# print nl
 	la $a0, NewLine
 	syscall
 	li $v0, 4			# print
 	la $a0, Mult4
+	syscall
+	li $v0, 1			# print 
+	move $a0, $t5
 	syscall
 	
 	li $v0, 4			# print nl
@@ -354,6 +406,10 @@ r_loop2_done:
 	li $v0, 4			# print
 	la $a0, Mult8
 	syscall
+	li $v0, 1			# print 
+	move $a0, $t6
+	syscall
+	
 	j exit
 
 exit:
