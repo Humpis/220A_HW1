@@ -275,7 +275,13 @@ r_loop_done:
 	li $t5, 0			# mut 4
 	li $t6, 0			# mult 8
 	
+	li $a0, 0		# resert a0
+	li $v0, 42
+	li $a1, 1024			# uppserbound
+	syscall
+	
 r_loop2:
+	addi $a0, $a0, 1
 	addi $t0, $t0, 1		# total values ++
 	li $t7, 2
 	div $a0, $t7			# check for even/mult2
@@ -310,6 +316,7 @@ mult8Checked:
 	beq $a0, 1024, power2
 	
 powerChecked:
+	li $a0, 0		# resert a0
 	li $v0, 42
 	li $a1, 1024			# uppserbound
 	syscall
